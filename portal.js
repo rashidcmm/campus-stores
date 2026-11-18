@@ -1,6 +1,6 @@
 (() => {
   // Demo portal: fixed accounts, data kept in this browser only.
-  const KEY = "campus-stores.portal.v2";
+  const KEY = "campus-stores.portal.v3";
   const SESSION = "campus-stores.portal.session";
   const root = document.querySelector("[data-portal]");
   const users = [
@@ -18,7 +18,7 @@
   const esc = (x) =>
     String(x ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const seed = () => ({
-    v: 2,
+    v: 3,
     next: 40,
     assets: [
       { id: "PR-04", type: "HDMI projector", model: "BenQ MH550", bin: "A2" },
@@ -32,7 +32,9 @@
       { id: "TR-01", type: "Tripod", model: "Manfrotto 190X", bin: "D3" },
     ],
     bookings: [
-      { id: 1, club: "Photo Circle", type: "Digital camera", asset: "CA-03", from: plus(-1), to: plus(5), status: "out", note: "Street portrait walk" },
+      { id: 1, club: "Photo Circle", type: "Digital camera", asset: "CA-03", from: plus(-1), to: plus(5), status: "out", note: "Street portrait walk", pickup: { cond: "Minor wear", note: "Hairline scratch on the lens hood. Lens glass clean, 2 batteries.", by: "Desk admin", agreed: true, agreedBy: "Dev Menon" } },
+      { id: 9, club: "Photo Circle", type: "Tripod", asset: "TR-01", from: today, to: plus(2), status: "pickup-check", note: "Night sky shoot", pickup: { cond: "Minor wear", note: "Small scratch on the head plate. All three leg locks tight.", by: "Desk admin" } },
+      { id: 10, club: "Film Society", type: "USB-C → HDMI adapter", asset: "AD-15", from: plus(-3), to: today, status: "return-check", note: "Edit-suite session", pickup: { cond: "Good", note: "No marks.", by: "Desk admin", agreed: true, agreedBy: "Isha Rao" }, ret: { cond: "Minor wear", note: "Scuff on the HDMI end. Works fine.", by: "Desk admin" } },
       { id: 2, club: "Debate Union", type: "Wireless microphone", asset: "MI-09", from: plus(-1), to: plus(1), status: "out", note: "Finals rehearsal", ext: { to: plus(3), status: "pending" } },
       { id: 3, club: "Film Society", type: "HDMI projector", asset: null, from: plus(4), to: plus(5), status: "pending", note: "Courtyard screening" },
       { id: 4, club: "Film Society", type: "Portable speaker", asset: null, from: plus(4), to: plus(5), status: "pending", note: "Courtyard screening" },
@@ -43,7 +45,7 @@
     ],
     transfers: [
       { id: 20, booking: 1, asset: "CA-03", fromClub: "Photo Circle", toClub: "Film Society", from: plus(1), to: plus(2), reason: "Trailer shoot for the screening", status: "requested" },
-      { id: 21, booking: 6, asset: "AD-12", fromClub: "Film Society", toClub: "Debate Union", from: today, to: plus(1), reason: "Slides from a USB-C laptop", status: "holder-accepted", proof: { cond: "Good", note: "Cable straight, no kinks, both ends clean." } },
+      { id: 21, booking: 6, asset: "AD-12", fromClub: "Film Society", toClub: "Debate Union", from: today, to: plus(1), reason: "Slides from a USB-C laptop", status: "receiver-agreed", proof: { cond: "Good", note: "Cable straight, no kinks, both ends clean.", by: "Isha Rao", agreed: true, agreedBy: "Tara Shah (Debate Union)" } },
     ],
     reports: [
       { id: 30, booking: 5, asset: "SP-02", club: "Debate Union", when: "before", text: "Grille on the left side is dented. Spotted it on the shelf before pickup.", status: "open", by: "Tara Shah", date: fmt(today) },
@@ -61,7 +63,7 @@
   function load() {
     try {
       const d = JSON.parse(localStorage.getItem(KEY));
-      if (d && d.v === 2 && Array.isArray(d.bookings)) return d;
+      if (d && d.v === 3 && Array.isArray(d.bookings)) return d;
     } catch {}
     return seed();
   }
@@ -70,7 +72,23 @@
     try { localStorage.setItem(KEY, JSON.stringify(db)); } catch { notice += " Browser storage is full or blocked; changes last for this visit."; }
     paint();
   }
+  const LIVE = ["approved", "pickup-check", "out", "return-check"];
   const asset = (id) => db.assets.find((a) => a.id === id);
+  const condOpts = [["", "Condition…"], ["Good", "Good, no marks"], ["Minor wear", "Minor wear"], ["Damaged", "Damaged"]];
+  const condForm = (form, id, label) =>
+    '<form data-form="' + form + '" data-id="' + id + '" class="inline cond"><select name="cond" required>' + opts(condOpts) +
+    '</select><input name="note" maxlength="160" placeholder="e.g. small scratch on the lens" required /><input type="file" name="photo" accept="image/*" aria-label="Condition photo" /><button type="submit" class="primary">' + esc(label) + "</button></form>";
+  const proofLine = (title, p) =>
+    p
+      ? '<p class="trail proofline">' + esc(title) + ": <b>" + esc(p.cond) + "</b>. " + esc(p.note) +
+        (p.by ? " · recorded by " + esc(p.by) : "") +
+        (p.agreed ? " · <b>agreed by " + esc(p.agreedBy || "the club") + "</b>" : "") +
+        (p.dispute ? ' · <span class="disputed">disputed: ' + esc(p.dispute) + "</span>" : "") +
+        "</p>" + photo(p.photo)
+      : "";
+  const agreeBox = (key) =>
+    '<div class="agree"><p class="muted">Check the unit. The handover only counts once you agree.</p>' + btn("Agree, that’s the condition", "agree", key, "primary") +
+    '<form data-form="dispute" data-id="' + key + '" class="inline"><input name="note" maxlength="160" placeholder="What’s different?" required /><button type="submit">Dispute</button></form></div>';
   const types = () => [...new Set(db.assets.map((a) => a.type))];
   const overlaps = (a, b) => a.from <= b.to && b.from <= a.to;
   const holderOf = (b) => {
@@ -83,7 +101,7 @@
         a.type === type &&
         !a.repair &&
         !db.bookings.some(
-          (b) => b.id !== except && b.asset === a.id && ["approved", "out"].includes(b.status) && overlaps(b, { from, to }),
+          (b) => b.id !== except && b.asset === a.id && LIVE.includes(b.status) && overlaps(b, { from, to }),
         ),
     );
   const tag = (t, k = "") => '<span class="tag ' + k + '">' + esc(t) + "</span>";
@@ -91,6 +109,8 @@
     ({
       pending: tag("Waiting for approval", "warn"),
       approved: tag("Approved"),
+      "pickup-check": tag("Pickup: club must agree condition", "warn"),
+      "return-check": tag("Return: club must agree condition", "warn"),
       out: tag("With the club"),
       returned: tag("Returned", "good"),
       declined: tag("Declined", "alert"),
@@ -128,12 +148,12 @@
     ["tara", "Debate Union member", ["Your microphone extension is waiting on the desk", "You reported a dented speaker before pickup", "Your adapter handover is waiting for the desk"]],
   ];
   const hints = {
-    Requests: "Try: approve a request by choosing a unit, decline one with a reason, approve an extension, mark a loan returned.",
+    Requests: "Try: approve a request by choosing a unit, decline one with a reason, approve an extension. At pickup and return you record the condition, and the club must agree before it counts.",
     Inventory: "Try: send a unit to repair, remove one, or add a new unit with a photo.",
-    Handovers: "Club to club: the holding club records the condition first, then the desk approves.",
+    Handovers: "Club to club: the holding club records the condition, the receiving club agrees, then the desk approves.",
     Issues: "Try: resolve a report, send the unit to repair, or log a fault found on return.",
     "Request gear": "Pickup can be at most 30 days ahead. Try a date further out to see the rule.",
-    "My bookings": "Pending requests can be cancelled. Approved or active loans can be extended by up to 7 days.",
+    "My bookings": "When the desk records a unit’s condition at pickup or return, agree or dispute it here. Nothing counts until you agree. Active loans can be extended by up to 7 days.",
     "Report an issue": "Report before pickup (so you aren’t blamed) or during the loan. Photos are optional.",
   };
 
@@ -145,7 +165,7 @@
       ? {
           Requests: db.bookings.filter((b) => b.status === "pending" || (b.ext && b.ext.status === "pending")).length + " waiting",
           Inventory: db.assets.length + " units",
-          Handovers: db.transfers.filter((t) => t.status === "holder-accepted").length + " to approve",
+          Handovers: db.transfers.filter((t) => t.status === "receiver-agreed").length + " to approve",
           Issues: db.reports.filter((r) => r.status === "open").length + " open",
         }
       : {
@@ -199,11 +219,14 @@
         const holder = holderOf(b);
         let actions = "";
         if (b.status === "pending") actions += btn("Cancel request", "cancel", b.id);
+        if (["pickup-check", "return-check"].includes(b.status) && !(b.status === "pickup-check" ? b.pickup : b.ret).dispute) actions += agreeBox("b:" + b.id);
         if (["approved", "out"].includes(b.status) && !(b.ext && b.ext.status === "pending"))
           actions += '<form data-form="extend" data-id="' + b.id + '" class="inline"><input type="date" name="to" min="' + plus(1, b.to) + '" max="' + plus(7, b.to) + '" required aria-label="New return date" /><button type="submit">Ask to extend</button></form>';
         return (
           '<section class="kit"><header><div><h3>' + esc(b.type) + " · " + esc(b.note) + "</h3><small>#" + b.id + " · " + fmt(b.from) + " to " + fmt(b.to) + (a ? " · " + esc(a.id + " " + a.model) : "") + "</small></div>" + statusTag(b.status) + '</header><ul><li class="unit"><div>' +
           (holder !== b.club ? '<p class="trail expect">Handed over to ' + esc(holder) + " for now</p>" : "") +
+          proofLine("Condition at pickup", b.pickup) +
+          proofLine("Condition at return", b.ret) +
           (b.ext ? "<p class=\"trail\">Extension to " + fmt(b.ext.to) + ": " + esc(b.ext.status) + "</p>" : "") +
           (b.reason ? '<p class="trail">Admin note: ' + esc(b.reason) + "</p>" : "") +
           '</div><div class="buttons">' + actions + "</div></li></ul></section>"
@@ -239,16 +262,18 @@
       outgoing.map((t) => transferRow(t)).join("")
     );
   }
-  const transferLabel = { requested: "Waiting for the holding club", "holder-accepted": "Waiting for the desk", approved: "Approved", declined: "Declined" };
+  const transferLabel = { requested: "Waiting for the holding club", "holder-accepted": "Receiving club must agree condition", "receiver-agreed": "Both clubs agreed · waiting for the desk", disputed: "Condition disputed", approved: "Approved", declined: "Declined" };
   function transferRow(t, admin = false) {
     const a = asset(t.asset);
     return (
       '<section class="kit"><header><div><h3>' + esc(a.id + " · " + a.model) + ": " + esc(t.fromClub) + " → " + esc(t.toClub) + "</h3><small>" + fmt(t.from) + " to " + fmt(t.to) + " · " + esc(t.reason) + "</small></div>" +
       tag(transferLabel[t.status] || t.status, t.status === "approved" ? "good" : t.status === "declined" ? "alert" : "warn") +
       '</header><ul><li class="unit"><div>' +
-      (t.proof ? '<p class="trail">Condition at handover: <b>' + esc(t.proof.cond) + "</b>. " + esc(t.proof.note) + "</p>" + photo(t.proof.photo) : "") +
+      proofLine("Condition recorded by " + t.fromClub, t.proof) +
       "</div><div class=\"buttons\">" +
-      (admin && t.status === "holder-accepted" ? btn("Approve handover", "t-approve", t.id, "primary") + btn("Decline", "t-decline", t.id) : "") +
+      (!admin && me.club === t.toClub && t.status === "holder-accepted" ? agreeBox("t:" + t.id) : "") +
+      (admin && t.status === "receiver-agreed" ? btn("Approve handover", "t-approve", t.id, "primary") : "") +
+      (admin && ["holder-accepted", "receiver-agreed", "disputed"].includes(t.status) ? btn("Decline", "t-decline", t.id) : "") +
       "</div></li></ul></section>"
     );
   }
@@ -282,7 +307,7 @@
   function adminRequests() {
     const pending = db.bookings.filter((b) => b.status === "pending");
     const ext = db.bookings.filter((b) => b.ext && b.ext.status === "pending");
-    const live = db.bookings.filter((b) => ["approved", "out"].includes(b.status));
+    const live = db.bookings.filter((b) => LIVE.includes(b.status));
     return (
       head("Requests", "Approve, allocate a unit, or decline with a reason") +
       (pending.length ? "" : '<p class="empty">No requests waiting.</p>') +
@@ -302,10 +327,17 @@
       }).join("") +
       '<h3 class="sub">Approved and out</h3>' +
       (live.length ? "" : '<p class="empty">Nothing approved or out.</p>') +
-      live.map((b) =>
-        '<div class="row"><div><strong>' + esc(b.asset + " · " + b.type) + "</strong><small>" + esc(b.club) + (holderOf(b) !== b.club ? " (with " + esc(holderOf(b)) + " now)" : "") + " · " + fmt(b.from) + " to " + fmt(b.to) + "</small></div><div>" + statusTag(b.status) +
-        (b.status === "approved" ? btn("Mark picked up", "pickup", b.id) : btn("Mark returned", "returned", b.id, "primary")) + "</div></div>",
-      ).join("")
+      live.map((b) => {
+        const p = b.status === "pickup-check" ? b.pickup : b.status === "return-check" ? b.ret : null;
+        const act =
+          b.status === "approved" || (b.status === "pickup-check" && p.dispute)
+            ? condForm("pickup", b.id, p && p.dispute ? "Re-record pickup condition" : "Hand over · record condition")
+            : b.status === "out" || (b.status === "return-check" && p.dispute)
+              ? condForm("return", b.id, p && p.dispute ? "Re-record return condition" : "Take back · record condition")
+              : '<p class="muted">Waiting for ' + esc(b.club) + " to agree the condition.</p>";
+        return '<section class="kit"><header><div><h3>' + esc(b.asset + " · " + b.type) + "</h3><small>" + esc(b.club) + (holderOf(b) !== b.club ? " (with " + esc(holderOf(b)) + " now)" : "") + " · " + fmt(b.from) + " to " + fmt(b.to) + "</small></div>" + statusTag(b.status) +
+          '</header><ul><li class="unit"><div>' + proofLine("Condition at pickup", b.pickup) + proofLine("Condition at return", b.ret) + act + "</div></li></ul></section>";
+      }).join("")
     );
   }
   function adminInventory() {
@@ -356,6 +388,21 @@
     const bk = find(v), tr = findT(v);
     switch (b.dataset.act) {
       case "tab": tab = v; notice = ""; root.querySelector("[data-page]").classList.add("enter"); return paint();
+      case "agree": {
+        const [k, n] = v.split(":");
+        if (k === "b") {
+          const x = find(n);
+          if (!x || x.club !== me.club) return;
+          if (x.status === "pickup-check") { Object.assign(x.pickup, { agreed: true, agreedBy: me.name }); x.status = "out"; return save("Condition agreed. The loan has started."); }
+          if (x.status === "return-check") { Object.assign(x.ret, { agreed: true, agreedBy: me.name }); x.status = "returned"; return save("Condition agreed. The loan is closed."); }
+          return;
+        }
+        const t = findT(n);
+        if (!t || t.toClub !== me.club || t.status !== "holder-accepted") return;
+        Object.assign(t.proof, { agreed: true, agreedBy: me.name + " (" + me.club + ")" });
+        t.status = "receiver-agreed";
+        return save("Both clubs agree on the condition. The desk will approve the handover.");
+      }
       case "as": {
         const u = users.find((x) => x.u === v);
         if (!u) return;
@@ -436,6 +483,34 @@
         b.asset = a; b.status = "approved";
         return save("Approved #" + b.id + " with " + a + ".");
       }
+      case "pickup":
+      case "return": {
+        const b = find(id);
+        if (!b) return;
+        const pic = await readPhoto(d.get("photo"));
+        const p = { cond: d.get("cond"), note: String(d.get("note")).trim(), photo: pic, by: me.name };
+        if (f.dataset.form === "pickup") { b.pickup = p; b.status = "pickup-check"; }
+        else { b.ret = p; b.status = "return-check"; }
+        return save("Condition recorded. " + b.club + " must agree before this counts.");
+      }
+      case "dispute": {
+        const [k, n] = f.dataset.id.split(":");
+        const note = String(d.get("note")).trim();
+        if (k === "b") {
+          const b = find(n);
+          if (!b) return;
+          const p = b.status === "pickup-check" ? b.pickup : b.ret;
+          p.dispute = note;
+          db.reports.push({ id: db.next++, booking: b.id, asset: b.asset, club: b.club, when: b.status === "pickup-check" ? "before" : "during", text: "Condition disputed at " + (b.status === "pickup-check" ? "pickup" : "return") + ": " + note, status: "open", by: me.name, date: fmt(today) });
+          return save("Dispute sent. The desk will re-check the unit with you.");
+        }
+        const t = findT(n);
+        if (!t) return;
+        t.proof.dispute = note;
+        t.status = "disputed";
+        db.reports.push({ id: db.next++, booking: t.booking, asset: t.asset, club: t.toClub, when: "before", text: "Handover condition disputed (" + t.fromClub + " → " + t.toClub + "): " + note, status: "open", by: me.name, date: fmt(today) });
+        return save("Dispute sent to the desk.");
+      }
       case "handover": {
         const b = find(id), from = d.get("from"), to = d.get("to");
         if (!b || to < from) return fail("Back-by date must be after the start date.");
@@ -446,7 +521,7 @@
         const t = findT(id);
         if (!t) return;
         const pic = await readPhoto(d.get("photo"));
-        t.proof = { cond: d.get("cond"), note: String(d.get("note")).trim(), photo: pic };
+        t.proof = { cond: d.get("cond"), note: String(d.get("note")).trim(), photo: pic, by: me.name };
         t.status = "holder-accepted";
         return save("Condition recorded. The desk will approve the handover.");
       }
