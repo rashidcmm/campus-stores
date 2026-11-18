@@ -10,7 +10,9 @@ Campus Stores is a Product Engineer work sample set at a fictional campus media 
 
 Clubs borrow kits, but this desk only lets you see and act on single slips. That is fine while everything leaves and comes back together. It breaks when a kit comes back in pieces, which is exactly what happened on this shift. I kept the one-slip-per-unit record and changed how the counter works with it: issue a kit in one step, check a kit in by ticking what is physically on the counter, and make anything still missing carry *who has it* and *when it is coming back* on the slip itself.
 
-**Try it in 30 seconds:** open `index.html`. The switch in the top-right corner flips between **Current desk** (the original, untouched) and **Proposed desk** (my change). Both run on the same records, so you can do the same job both ways. **What I changed** in the top strip has the short version.
+**▶ Live app: https://rashidcmm.github.io/campus-stores/** (nothing to install; it also works offline from `index.html`)
+
+**Try it in 30 seconds:** open the live link or `index.html`. The switch in the top-right corner flips between **Current desk** (the original, untouched) and **Proposed desk** (my change). Both run on the same records, so you can do the same job both ways. **What I changed** in the top strip has the short version.
 
 ### The shift, worked on the current desk
 
@@ -80,11 +82,27 @@ Concretely: sit at the desk during a morning shift change for a week and note ea
 - **Opening Check in pre-fills “who is at the counter”** from the slip. That speeds up the common case, but someone could save without looking. I’d watch for that in the observation above.
 - **No backend.** State stays in `localStorage` like the original. I bumped the storage key to `v2` so older saved shifts can’t load into the new shape.
 
+### How this would grow beyond the prototype
+
+I kept the prototype as a single offline page, because that is what a reviewer (and a counter laptop) can open instantly. If the desk kept it, this is the order I would build in:
+
+1. **A real backend and database** (for example Postgres behind a small API). Loans, check-ins and expected-back times become records with a full audit trail: who changed what, at which counter, and when. The `localStorage` state maps almost one-to-one onto `requests`, `assets`, `loans` and `check_ins` tables.
+2. **Role-based access.**
+   - **Desk staff** issue and check in.
+   - **Club leads** (Isha) see their club’s open kit and can say who is collecting.
+   - **Club members** (Kabir, Leela) can report “I have the adapter, back Sat 9 am” from their phone before they reach the counter.
+   - **An admin** (Student Activities Office) approves requests and manages inventory and repairs.
+3. **A club view: “Who has our kit?”** The same expected-back line staff see, shown to the club. Most delegated returns would be announced before the counter ever has to ask.
+4. **Tag scanning** at issue and check-in, replacing the checkbox, plus a reminder when an expected-back time passes.
+
+None of this changes the decision above. It moves the same information (who has it, and when it’s coming back) closer to the person who knows it.
+
 ### What changed in the code
 
 - `app.js`: original screens kept as **Current desk**. Added the **Proposed desk** request page (issue kit, request messages, kit status) and the register (grouping, lookup, overdue, check-in with required follow-up, undo). Added the `expect`, `returnedBy` and `returnedAt` fields on loans and the auto check-in note.
 - `index.html`: desk version switch, *What I changed* panel, step counter, undo button.
 - `styles.css`: styles for the new states, reusing the existing tokens. It also handles narrow screens and respects reduced motion.
+- **Equipment icons and motion (proposed desk):** each unit in Inventory and the register shows an icon (projector, speaker, adapter, mic, camera), so a unit is recognisable at a glance. Rows ease in as they scroll into view when you open a screen, but not on every click. All of it is off for anyone with *reduce motion* turned on.
 - `docs/`: screenshots used above.
 
 Built with Claude Code as a pair. The brief allows AI tools. The decision, the shift walkthrough and the trade-offs are mine.

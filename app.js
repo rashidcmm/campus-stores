@@ -210,6 +210,27 @@
     '<span class="tag' + (good ? " good" : "") + '">' + esc(t) + "</span>";
   const tag = (t, kind = "") =>
     '<span class="tag ' + kind + '">' + esc(t) + "</span>";
+  const typeIcon = {
+    "HDMI projector": "projector",
+    "Portable speaker": "speaker",
+    "USB-C → HDMI adapter": "cable",
+    "Wireless microphone": "mic",
+    "Digital camera": "camera",
+  };
+  const gear = (type) =>
+    '<span class="gear" aria-hidden="true"><svg class="store-icon"><use href="#icon-' +
+    (typeIcon[type] || "package") +
+    '"></use></svg></span>';
+  const gearRow = (type, label, sub, right) =>
+    '<div class="row has-gear" data-reveal>' +
+    gear(type) +
+    "<div><strong>" +
+    esc(label) +
+    "</strong><small>" +
+    esc(sub) +
+    "</small></div><div>" +
+    right +
+    "</div></div>";
   const timing = (l) => {
     if (l.back || !(l.due in dueAt)) return "";
     const left = dueAt[l.due] - phaseAt[s.phase];
@@ -281,7 +302,7 @@
           (loan.expect ? loan.expect.who : loan.who) +
           " on L-" +
           loan.num;
-      html += row(
+      html += (proposed() ? (...x) => gearRow(a.type, ...x) : row)(
         a.id + " · " + a.type,
         sub,
         proposed() && loan && timing(loan) === "overdue"
@@ -674,7 +695,9 @@
               "</p>"
             : "";
         return (
-          '<li class="unit"><div><strong>L-' +
+          '<li class="unit has-gear">' +
+          gear(a.type) +
+          "<div><strong>L-" +
           l.num +
           " · " +
           esc(a.id + " " + a.type) +
@@ -689,7 +712,7 @@
       })
       .join("");
     return (
-      '<section class="kit"><header><div><h3>' +
+      '<section class="kit" data-reveal><header><div><h3>' +
       esc(r.club + " · " + r.event) +
       "</h3><small>" +
       esc(r.id + " · collected by " + whos) +
@@ -832,11 +855,43 @@
       )
       .join("");
     q("[data-page]").innerHTML = screens[s.tab]();
+    // Animate only when the screen changes, not on every click inside it.
+    const view = s.mode + "/" + s.tab;
+    reveal(view !== lastView);
+    lastView = view;
     if (q("[data-filter]")) q("[data-filter]").value = s.filter;
     const checkin = q("[data-checkin]");
     if (checkin) syncCheckin(checkin);
     q("[data-status]").textContent = s.notice;
     q("[data-undo]").hidden = !undo;
+  }
+  let lastView = "";
+  let observer = null;
+  function reveal(animate) {
+    const items = root.querySelectorAll("[data-reveal]:not(.in)");
+    if (observer) observer.disconnect();
+    if (
+      !animate ||
+      !("IntersectionObserver" in window) ||
+      matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      items.forEach((el) => el.classList.add("in"));
+      return;
+    }
+    observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries)
+          if (e.isIntersecting) {
+            e.target.classList.add("in");
+            observer.unobserve(e.target);
+          }
+      },
+      { rootMargin: "0px 0px -6% 0px" },
+    );
+    items.forEach((el, i) => {
+      el.style.setProperty("--i", String(i % 6));
+      observer.observe(el);
+    });
   }
   function commit(msg) {
     if (msg) s.notice = msg;
@@ -941,6 +996,7 @@
     if (!e.target.matches("[data-query]")) return;
     s.query = e.target.value;
     q("[data-results]").innerHTML = results();
+    reveal(false);
   });
   root.addEventListener("submit", (e) => {
     e.preventDefault();
