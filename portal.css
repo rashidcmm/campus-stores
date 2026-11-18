@@ -1,0 +1,70 @@
+#campus-stores.portal .backlink,
+#campus-stores.portal .ghost {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 13.5px;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+#campus-stores.portal .login {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+#campus-stores.portal .login .panel {
+  margin-top: 0;
+}
+#campus-stores.portal .demo {
+  padding: 18px;
+  border-radius: 22px;
+  background: var(--desk);
+}
+#campus-stores.portal .demo ul {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+#campus-stores.portal .demo small {
+  display: block;
+}
+#campus-stores.portal .sub {
+  margin: 22px 0 4px;
+  font-size: 14px;
+  color: var(--sel);
+}
+#campus-stores.portal .inline {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+#campus-stores.portal .inline input {
+  padding: 7px 12px;
+}
+#campus-stores.portal .pad {
+  padding: 0 16px 14px;
+}
+#campus-stores.portal .proof {
+  display: block;
+  max-width: 220px;
+  margin-top: 8px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+#campus-stores.portal input[type="file"] {
+  padding: 7px 10px;
+  width: 100%;
+}
+#campus-stores.portal .kit header .tag {
+  flex-shrink: 0;
+}
+@container (max-width: 760px) {
+  #campus-stores.portal .login {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -84,6 +84,19 @@ Concretely: sit at the desk during a morning shift change for a week and note ea
 - **Opening Check in pre-fills “who is at the counter”** from the slip. That speeds up the common case, but someone could save without looking. I’d watch for that in the observation above.
 - **No backend.** State stays in `localStorage` like the original. I bumped the storage key to `v2` so older saved shifts can’t load into the new shape.
 
+### Club and admin portal (demo)
+
+**https://rashidcmm.github.io/campus-stores/portal.html**, or use **Club & admin sign in** in the desk header. Demo accounts only (username and password, no email). Data is kept in your browser, and **Reset demo data** restores it.
+
+| Account | Role | What they can do |
+| --- | --- | --- |
+| `admin` / `admin123` | Admin | Approve requests and allocate a unit (only units free for those dates), decline with a reason, mark pickup and return, approve or decline extensions, add or remove units, send units to repair, approve handovers, log and resolve issues |
+| `isha` / `film123` | Film Society member | Request gear (pickup at most 30 days ahead, up to 14 days), track bookings, ask to extend (up to 7 days), report an issue before pickup or during a loan with a photo |
+| `dev` / `photo123` | Photo Circle member | Same as above. Photo Circle starts with the camera out, so it can receive a handover request |
+| `tara` / `debate123` | Debate Union member | Same as above |
+
+**Handover mid-loan:** if Photo Circle has the camera and Film Society needs it for two days, Film Society requests a handover. Photo Circle accepts by recording the camera's condition (rating, note, optional photo as proof). The desk then approves, and the booking shows the camera as with Film Society until it goes back. Condition proof stays on the record, so any later damage report has a before-state to compare against.
+
 ### How this would grow beyond the prototype
 
 I kept the prototype as a single offline page, because that is what a reviewer (and a counter laptop) can open instantly. If the desk kept it, this is the order I would build in:
