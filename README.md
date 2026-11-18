@@ -12,7 +12,9 @@ Clubs borrow kits, but this desk only lets you see and act on single slips. That
 
 **▶ Live app: https://rashidcmm.github.io/campus-stores/** (nothing to install; it also works offline from `index.html`)
 
-**Try it in 30 seconds:** open the live link or `index.html`. The switch in the top-right corner flips between **Current desk** (the original, untouched) and **Proposed desk** (my change). Both run on the same records, so you can do the same job both ways. **What I changed** in the top strip has the short version.
+**Try it in 30 seconds:** open the live link or `index.html`. The switch in the header flips between **Current desk** (the original workflow) and **Proposed desk** (my change). Both run on the same records, so you can do the same job both ways.
+
+![Campus Stores: pink header with the four sections as glass windows, the shift card and the Current/Proposed switch](docs/0-home.jpg)
 
 ### The shift, worked on the current desk
 
@@ -67,7 +69,7 @@ Clubs borrow kits, but this desk only lets you see and act on single slips. That
 - **The approval checks** (type must be on the approved form, approved quantity, units in repair excluded). Issue kit runs the same rules.
 - **The Desk book** for messages that aren’t about a slip. It now also receives check-ins automatically instead of depending on someone retyping them.
 - **The single-unit issue slip** (*New issue slip*) for one-off swaps, like replacing a faulty speaker mid-event.
-- **The visual language.** Same tokens, type and layout. New states only add warm “expected back” and red “overdue” tags.
+- **The four records** (Requests, Inventory, Loan register, Desk book). They moved from a sidebar into four windows at the top, each showing a live count (units out, entries), so staff can see the state of the desk before opening anything.
 
 ### What I would watch at a real counter
 
@@ -100,8 +102,8 @@ None of this changes the decision above. It moves the same information (who has 
 ### What changed in the code
 
 - `app.js`: original screens kept as **Current desk**. Added the **Proposed desk** request page (issue kit, request messages, kit status) and the register (grouping, lookup, overdue, check-in with required follow-up, undo). Added the `expect`, `returnedBy` and `returnedAt` fields on loans and the auto check-in note.
-- `index.html`: desk version switch, *What I changed* panel, step counter, undo button.
-- `styles.css`: styles for the new states, reusing the existing tokens. It also handles narrow screens and respects reduced motion.
+- `index.html`: new structure. A full-width header carries the brand, the desk version switch, the desk clock, and the four sections as glass windows. Below it sit a shift card with a progress bar, the page, and an undo button. The exam-paper strip (in-app brief) is gone; the brief lives in the original repository and this README.
+- `styles.css`: rewritten as a dark pink and white theme. Montserrat for headings, Plus Jakarta Sans for text (from Google Fonts, falling back to system fonts offline). Dropdowns, inputs and buttons are rounded. A spring-eased load sequence brings in the header, the windows (with a slight 3D tilt), the shift card and the page; screens slide in when you switch. All motion is off under *reduce motion*, and the layout reflows to two windows per row on phones.
 - **Equipment icons and motion (proposed desk):** each unit in Inventory and the register shows an icon (projector, speaker, adapter, mic, camera), so a unit is recognisable at a glance. Rows ease in as they scroll into view when you open a screen, but not on every click. All of it is off for anyone with *reduce motion* turned on.
 - `docs/`: screenshots used above.
 

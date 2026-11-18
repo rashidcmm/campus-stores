@@ -8,6 +8,12 @@
       name="description"
       content="Work a shift at a fictional campus equipment desk in this interactive product engineering exercise."
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    />
     <link rel="stylesheet" href="./styles.css" />
     <script defer src="./app.js"></script>
   </head>
@@ -103,101 +109,46 @@
       </symbol>
     </svg>
     <main>
-      <div id="campus-stores">
-        <div class="examstrip">
-          <span>Product Engineer practical</span>
-          <details>
-            <summary>Candidate brief</summary>
-            <div class="briefcopy">
-              <h2>Would you keep this product?</h2>
-              <p>
-                Work a shift at the campus media desk. Get the Film Society’s
-                kit out for its screening, handle the return, and leave the next
-                shift enough information to finish the job. Use the time control
-                to move the story forward.
-              </p>
-              <p>
-                Show one moment the product handles well and one moment you
-                would change. Use a specific action or decision from your shift
-                as evidence for each.
-              </p>
-              <p>
-                Sketch or prototype your change. Walk us through the same job
-                using it, explain what you would keep, and name one observation
-                at a real counter that would tell you whether it helped.
-              </p>
-              <p>
-                Use any tools you like, including AI assistants, web search,
-                and design or coding tools.
-              </p>
-            </div>
-          </details>
-          <details>
-            <summary>What I changed</summary>
-            <div class="briefcopy">
-              <h2>Work the counter by kit. Keep the register by unit.</h2>
-              <p>
-                Clubs borrow kits, but the desk could only see single slips. At
-                7:30 pm I closed the projector and speaker one row at a time and
-                wrote the missing adapter into the Desk book. At 9 am the
-                register said <b>L-404 · AD-12 · Kabir Sen</b>. Leela’s name
-                was nowhere on it, and the Belkin and Anker adapters share
-                shelf C4.
-              </p>
-              <p>
-                <b>Issue kit</b> picks every approved unit from one form.
-                <b>Check in</b> asks you to tick what is on the counter. Anything
-                left unticked stays open with who has it and when it’s coming
-                back. <b>Who’s at the counter?</b> finds Leela’s slip by her name
-                and tells you which adapter to look for.
-              </p>
-              <p>
-                Switch to <b>Current desk</b> to run the same shift on the
-                original. The README has the full walkthrough.
-              </p>
-            </div>
-          </details>
-          <div class="modes" role="group" aria-label="Desk version">
-            <button type="button" data-action="mode" data-val="current">
-              Current desk
-            </button>
-            <button type="button" data-action="mode" data-val="proposed">
-              Proposed desk
-            </button>
-          </div>
-        </div>
+      <div id="campus-stores" class="booting">
         <header class="mast">
-          <div class="brandblock">
-            <div class="brandmark" aria-hidden="true">
-              <svg aria-hidden="true" class="store-icon">
-                <use href="#icon-package-open"></use>
-              </svg>
+          <div class="masttop">
+            <div class="brandblock">
+              <div class="brandmark" aria-hidden="true">
+                <svg aria-hidden="true" class="store-icon">
+                  <use href="#icon-package-open"></use>
+                </svg>
+              </div>
+              <div>
+                <h1>Campus Stores</h1>
+                <div class="muted">Media equipment desk</div>
+              </div>
             </div>
-            <div>
-              <h1>Campus Stores</h1>
-              <div class="muted">Media equipment desk</div>
+            <div class="mastside">
+              <div class="modes" role="group" aria-label="Desk version">
+                <button type="button" data-action="mode" data-val="current">
+                  Current desk
+                </button>
+                <button type="button" data-action="mode" data-val="proposed">
+                  Proposed desk
+                </button>
+              </div>
+              <div class="clock">
+                <small>Desk time</small><strong data-clock></strong>
+              </div>
             </div>
           </div>
-          <div class="clock">
-            <small>Desk time</small><strong data-clock></strong>
-          </div>
+          <nav class="windows" aria-label="Store records" data-nav></nav>
         </header>
         <aside class="shift">
-          <div>
+          <div class="shifttext">
+            <div class="progress" aria-hidden="true"><i data-progress></i></div>
             <small class="step" data-step></small>
             <b data-shift-title></b>
             <p data-shift></p>
           </div>
           <button type="button" data-action="advance"></button>
         </aside>
-        <div class="shell">
-          <nav aria-label="Store records" data-nav></nav>
-          <section
-            class="page"
-            data-page
-            aria-label="Selected register"
-          ></section>
-        </div>
+        <section class="page" data-page aria-label="Selected register"></section>
         <div class="statusbar">
           <span role="status" aria-live="polite" data-status></span
           ><button type="button" data-action="undo" data-undo hidden>

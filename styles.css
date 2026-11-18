@@ -1,13 +1,21 @@
+/* Campus Stores — dark pink & white */
 :root {
-  color-scheme: light dark;
-  background: light-dark(#f0f2f1, #191e21);
+  color-scheme: light;
+  background: #fff6fa;
 }
 body {
   margin: 0;
-  padding: clamp(10px, 3vw, 44px) clamp(6px, 3vw, 36px);
+  min-height: 100vh;
+  padding: clamp(12px, 3vw, 36px) clamp(10px, 3vw, 40px) 28px;
+  background:
+    radial-gradient(48rem 26rem at 8% -6%, #fbcfe8 0%, transparent 62%),
+    radial-gradient(40rem 26rem at 100% 4%, #fce7f3 0%, transparent 60%),
+    radial-gradient(36rem 24rem at 50% 110%, #fdf2f8 0%, transparent 70%),
+    #fff6fa;
+  background-attachment: fixed;
 }
 body > main {
-  max-width: 1060px;
+  max-width: 1240px;
   margin: 0 auto;
 }
 .icon-library {
@@ -24,29 +32,31 @@ body > main {
 }
 
 #campus-stores {
-  color-scheme: light dark;
-  --ink: light-dark(#202c35, #ecf0f0);
-  --quiet: light-dark(#526370, #b9c5cb);
-  --paper: light-dark(#fff, #232a30);
-  --desk: light-dark(#f3f5f5, #1d2328);
-  --nav: light-dark(#eaf0f1, #29333b);
-  --sel: light-dark(#233e4c, #c5dce4);
-  --inv: light-dark(#fff, #172b34);
-  --line: light-dark(#d2dcdf, #475158);
-  --memo: light-dark(#fff3d8, #3d3426);
-  --memotxt: light-dark(#65491e, #ead4a5);
-  --mark: light-dark(#bd502f, #f2a585);
-  --ok: light-dark(#e3f1e8, #2d4838);
-  --oktxt: light-dark(#25523d, #bedac8);
-  background: var(--paper);
+  --ink: #2b0d1e;
+  --quiet: #85566e;
+  --paper: #ffffff;
+  --desk: #fdf2f7;
+  --nav: #fce7f0;
+  --sel: #9d174d;
+  --sel2: #be185d;
+  --inv: #ffffff;
+  --line: #f3d4e2;
+  --memo: #fdf0f6;
+  --memotxt: #831843;
+  --mark: #db2777;
+  --ok: #e6f6ed;
+  --oktxt: #1d6a43;
+  --warn: #fff3d6;
+  --warntxt: #7a5000;
+  --alert: #ffe4df;
+  --alerttxt: #b42318;
+  --spring: cubic-bezier(0.2, 0.9, 0.25, 1.15);
   color: var(--ink);
   font:
-    14px/1.48 "Inter",
-    "Arial",
+    15px/1.55 "Plus Jakarta Sans",
+    system-ui,
+    "Segoe UI",
     sans-serif;
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  overflow: hidden;
   container-type: inline-size;
 }
 #campus-stores * {
@@ -61,108 +71,261 @@ body > main {
 #campus-stores p {
   margin: 0;
 }
-#campus-stores h1 {
-  font:
-    600 clamp(24px, 4cqw, 33px)/1.13 "Archivo",
-    system-ui,
-    sans-serif;
-  letter-spacing: -0.05em;
+#campus-stores h1,
+#campus-stores h2,
+#campus-stores .wlabel {
+  font-family: "Montserrat", "Plus Jakarta Sans", system-ui, sans-serif;
 }
-#campus-stores h2 {
-  font-size: 20px;
+#campus-stores h1 {
+  font-size: clamp(30px, 5.2cqw, 54px);
+  font-weight: 800;
+  line-height: 1.05;
   letter-spacing: -0.03em;
 }
+#campus-stores h2 {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
 #campus-stores h3 {
-  font-size: 15px;
+  font-size: 15.5px;
+  font-weight: 700;
 }
 #campus-stores .muted,
 #campus-stores small {
   color: var(--quiet);
 }
 #campus-stores small {
-  font-size: 12px;
+  font-size: 12.5px;
 }
-#campus-stores .examstrip {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 4px 16px;
-  flex-wrap: wrap;
-  background: var(--desk);
-  border-bottom: 1px solid var(--line);
-  padding: 9px 18px;
-  color: var(--quiet);
-  font-size: 13px;
+
+/* ---------- Header with glass windows ---------- */
+#campus-stores .mast {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  border-radius: 30px;
+  padding: clamp(18px, 3cqw, 32px);
+  color: #fff;
+  background: linear-gradient(135deg, #4a0420 0%, #831843 42%, #be185d 78%, #db2777 100%);
+  box-shadow: 0 40px 70px -40px rgba(131, 24, 67, 0.75);
 }
-#campus-stores details[open] {
-  width: 100%;
+#campus-stores .mast::before,
+#campus-stores .mast::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 50%;
+  filter: blur(10px);
+  pointer-events: none;
 }
-#campus-stores summary {
-  font-weight: 650;
-  color: var(--sel);
-  cursor: pointer;
+#campus-stores .mast::before {
+  width: 420px;
+  height: 420px;
+  right: -120px;
+  top: -180px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.32), transparent 65%);
 }
-#campus-stores .briefcopy {
-  color: var(--ink);
-  max-width: 79ch;
-  padding: 12px 0 5px;
-  display: grid;
-  gap: 8px;
+#campus-stores .mast::after {
+  width: 360px;
+  height: 360px;
+  left: 18%;
+  bottom: -220px;
+  background: radial-gradient(circle, rgba(251, 207, 232, 0.45), transparent 65%);
 }
-#campus-stores .mast,
+#campus-stores .masttop,
 #campus-stores .brandblock,
-#campus-stores .shift,
-#campus-stores .sectionhead,
-#campus-stores .statusbar,
-#campus-stores .buttons {
+#campus-stores .mastside {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
 }
-#campus-stores .mast {
-  padding: 17px 20px;
+#campus-stores .masttop {
   justify-content: space-between;
   flex-wrap: wrap;
+  gap: 16px 24px;
+}
+#campus-stores .mastside {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+#campus-stores .mast .muted,
+#campus-stores .mast small {
+  color: rgba(255, 255, 255, 0.78);
 }
 #campus-stores .brandmark {
-  background: var(--mark);
-  color: var(--inv);
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
   display: grid;
   place-items: center;
-  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 #campus-stores .brandmark svg {
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
+}
+#campus-stores .glass,
+#campus-stores .clock,
+#campus-stores .modes,
+#campus-stores .windows button {
+  background: rgba(255, 255, 255, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
 }
 #campus-stores .clock {
   display: grid;
   text-align: right;
+  padding: 8px 16px;
+  border-radius: 18px;
 }
 #campus-stores .clock strong {
   font-variant-numeric: tabular-nums;
+  font-weight: 700;
 }
-#campus-stores .shift {
-  background: var(--memo);
-  color: var(--memotxt);
-  padding: 12px 19px;
-  justify-content: space-between;
-  border-block: 1px solid var(--line);
+#campus-stores .modes {
+  display: inline-flex;
+  padding: 4px;
+  gap: 4px;
+  border-radius: 999px;
 }
-#campus-stores .shift div {
-  max-width: 67ch;
-}
-#campus-stores .shift b {
+#campus-stores .mast .modes button {
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  padding: 7px 14px;
   font-size: 13px;
 }
+#campus-stores .mast .modes button[aria-pressed="true"] {
+  background: #fff;
+  color: var(--sel);
+  box-shadow: 0 6px 18px -8px rgba(0, 0, 0, 0.35);
+}
+#campus-stores .windows {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: clamp(18px, 3cqw, 28px);
+}
+#campus-stores .windows button {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 12px;
+  text-align: left;
+  min-height: 84px;
+  padding: 14px 16px;
+  border-radius: 22px;
+  color: #fff;
+  transition:
+    transform 0.35s var(--spring),
+    background-color 0.25s,
+    box-shadow 0.35s;
+}
+#campus-stores .windows button:hover {
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.22);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+#campus-stores .windows button[aria-pressed="true"] {
+  background: #fff;
+  color: var(--sel);
+  border-color: #fff;
+  box-shadow: 0 18px 36px -18px rgba(0, 0, 0, 0.45);
+}
+#campus-stores .wicon {
+  grid-row: span 2;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.18);
+}
+#campus-stores .windows button[aria-pressed="true"] .wicon {
+  background: var(--nav);
+}
+#campus-stores .wicon svg {
+  width: 21px;
+  height: 21px;
+}
+#campus-stores .wlabel {
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+#campus-stores .windows small {
+  color: inherit;
+  opacity: 0.78;
+  font-weight: 500;
+}
+
+/* ---------- Shift card ---------- */
+#campus-stores .shift {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 18px 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 24px 50px -36px rgba(157, 23, 77, 0.45);
+}
+#campus-stores .shifttext {
+  max-width: 72ch;
+  display: grid;
+  gap: 2px;
+}
+#campus-stores .progress {
+  width: min(260px, 100%);
+  height: 6px;
+  border-radius: 999px;
+  background: var(--nav);
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+#campus-stores .progress i {
+  display: block;
+  height: 100%;
+  width: 33%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--sel), var(--mark));
+  transition: width 0.7s var(--spring);
+}
+#campus-stores .shift .step {
+  color: var(--mark);
+  font-weight: 700;
+}
+#campus-stores .shift b {
+  font-family: "Montserrat", "Plus Jakarta Sans", sans-serif;
+  font-size: 17px;
+  color: var(--sel);
+}
+#campus-stores .shift p {
+  color: var(--ink);
+}
 #campus-stores .shift button {
-  background: transparent;
-  border-color: var(--memotxt);
-  color: var(--memotxt);
   flex-shrink: 0;
 }
+#campus-stores [data-action="advance"] {
+  background: linear-gradient(135deg, var(--sel), var(--mark));
+  color: #fff;
+  border-color: transparent;
+  padding: 11px 20px;
+  box-shadow: 0 14px 28px -14px rgba(190, 24, 93, 0.8);
+}
+
+/* ---------- Controls ---------- */
 #campus-stores button,
 #campus-stores select,
 #campus-stores input,
@@ -170,70 +333,96 @@ body > main {
   font: inherit;
   color: var(--ink);
   border: 1px solid var(--line);
-  border-radius: 6px;
-  background: var(--paper);
+  background-color: var(--paper);
   min-width: 0;
-  padding: 7px 9px;
+  padding: 9px 14px;
 }
 #campus-stores button {
-  font-size: 13px;
+  font-size: 13.5px;
   font-weight: 600;
   cursor: pointer;
+  border-radius: 999px;
+  transition:
+    transform 0.25s var(--spring),
+    border-color 0.2s,
+    background-color 0.2s,
+    box-shadow 0.25s;
 }
 #campus-stores button:hover {
-  border-color: var(--sel);
+  border-color: var(--sel2);
+}
+#campus-stores button:active {
+  transform: scale(0.97);
 }
 #campus-stores .primary {
-  background: var(--sel);
+  background: linear-gradient(135deg, var(--sel), var(--sel2));
   color: var(--inv);
-  border-color: var(--sel);
+  border-color: transparent;
+  box-shadow: 0 10px 22px -12px rgba(157, 23, 77, 0.8);
 }
-#campus-stores :is(button, input, textarea, select, summary):focus-visible {
-  outline: 3px solid var(--mark);
+#campus-stores .primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px -12px rgba(157, 23, 77, 0.85);
+}
+#campus-stores select,
+#campus-stores input,
+#campus-stores textarea {
+  border-radius: 16px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+#campus-stores select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%239d174d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+}
+#campus-stores select:hover,
+#campus-stores input:hover,
+#campus-stores textarea:hover {
+  border-color: #e9a9c6;
+}
+#campus-stores :is(select, input, textarea):focus {
+  border-color: var(--mark);
+  box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.14);
+  outline: none;
+}
+#campus-stores :is(button, summary):focus-visible,
+#campus-stores input[type="checkbox"]:focus-visible {
+  outline: 3px solid rgba(219, 39, 119, 0.55);
   outline-offset: 2px;
 }
-#campus-stores .shell {
-  display: grid;
-  grid-template-columns: 155px minmax(0, 1fr);
-  min-height: 315px;
+#campus-stores button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
-#campus-stores nav {
-  background: var(--nav);
-  border-right: 1px solid var(--line);
-  padding: 12px 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-#campus-stores nav button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-align: left;
-  border: 1px solid transparent;
-  background: transparent;
-  font-weight: 500;
-}
-#campus-stores nav button[aria-pressed="true"] {
-  background: var(--sel);
-  color: var(--inv);
-}
-#campus-stores nav svg {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
+
+/* ---------- Page ---------- */
 #campus-stores .page {
-  padding: 17px 17px 20px;
+  margin-top: 16px;
+  padding: clamp(18px, 3cqw, 30px);
+  min-height: 340px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: 0 30px 60px -44px rgba(157, 23, 77, 0.5);
   min-width: 0;
 }
 #campus-stores .sectionhead,
-#campus-stores .statusbar {
-  justify-content: space-between;
-  flex-wrap: wrap;
+#campus-stores .statusbar,
+#campus-stores .buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 #campus-stores .sectionhead {
-  margin-bottom: 12px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
 }
 #campus-stores .sectionhead small {
   margin-top: 2px;
@@ -244,62 +433,93 @@ body > main {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 8px;
-  padding: 9px 0;
+  gap: 10px;
+  padding: 12px 0;
 }
 #campus-stores .row small,
 #campus-stores label span {
   display: block;
 }
+#campus-stores .row > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+}
 #campus-stores .tag {
   background: var(--desk);
   color: var(--quiet);
   font-size: 12px;
-  padding: 3px 7px;
-  border-radius: 5px;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 999px;
   display: inline-block;
 }
-#campus-stores .good {
+#campus-stores .good,
+#campus-stores .tag.good {
   background: var(--ok);
   color: var(--oktxt);
 }
+#campus-stores .tag.warn {
+  background: var(--warn);
+  color: var(--warntxt);
+}
+#campus-stores .tag.alert {
+  background: var(--alert);
+  color: var(--alerttxt);
+  font-weight: 700;
+}
 #campus-stores .record {
   margin-top: 14px;
-  padding: 12px 13px;
+  padding: 14px 16px;
   background: var(--desk);
-  border-left: 3px solid var(--sel);
+  border-left: 4px solid var(--sel2);
+  border-radius: 6px 18px 18px 6px;
 }
 #campus-stores .record p {
   margin-top: 5px;
 }
+#campus-stores .record ul {
+  margin: 6px 0 0;
+}
 #campus-stores .buttons {
   flex-wrap: wrap;
-  margin: 10px 0;
+  margin: 12px 0;
 }
 #campus-stores .buttons button[aria-pressed="true"] {
   background: var(--sel);
   color: var(--inv);
+  border-color: var(--sel);
 }
 #campus-stores .buttons label {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
+  font-weight: 600;
 }
 #campus-stores .form {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  margin: 10px 0;
+  gap: 12px;
+  margin: 12px 0;
 }
-#campus-stores .form label {
+#campus-stores .form label,
+#campus-stores .still label,
+#campus-stores .lookup label {
   font-size: 13px;
   font-weight: 600;
   min-width: 0;
 }
-#campus-stores .form label span {
-  margin-bottom: 3px;
+#campus-stores .form label span,
+#campus-stores .still label span,
+#campus-stores .lookup label span {
+  margin-bottom: 5px;
 }
-#campus-stores .form :is(select, input, textarea) {
+#campus-stores .form :is(select, input, textarea),
+#campus-stores .still select,
+#campus-stores .lookup input,
+#campus-stores .picklist select {
   width: 100%;
   font-weight: 400;
 }
@@ -309,78 +529,40 @@ body > main {
 #campus-stores textarea {
   resize: vertical;
 }
+
+/* ---------- Status bar (floating glass pill) ---------- */
 #campus-stores .statusbar {
-  background: var(--desk);
-  border-top: 1px solid var(--line);
-  padding: 8px 16px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-top: 16px;
+  padding: 8px 8px 8px 20px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid var(--line);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 18px 40px -26px rgba(157, 23, 77, 0.55);
   color: var(--quiet);
-  font-size: 12px;
+  font-size: 13px;
 }
 #campus-stores .statusbar span {
-  flex: 1 1 160px;
+  flex: 1 1 200px;
 }
 #campus-stores .statusbar button {
-  font-size: 12px;
-  background: transparent;
+  font-size: 12.5px;
+  padding: 7px 14px;
 }
-/* ---------- Proposed desk ---------- */
-#campus-stores {
-  --warn: light-dark(#fff1cc, #463a1d);
-  --warntxt: light-dark(#6b4a00, #f0d79a);
-  --alert: light-dark(#fbe3da, #4d2a21);
-  --alerttxt: light-dark(#9b3517, #f7bba5);
-}
-#campus-stores .modes {
-  display: inline-flex;
-  margin-left: auto;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  overflow: hidden;
-  align-self: center;
-}
-#campus-stores .modes button {
-  border: 0;
-  border-radius: 0;
-  background: transparent;
-  padding: 4px 10px;
-  font-size: 12px;
-  color: var(--quiet);
-}
-#campus-stores .modes button[aria-pressed="true"] {
-  background: var(--sel);
-  color: var(--inv);
-}
-#campus-stores .shift .step {
-  display: block;
-  color: inherit;
-  opacity: 0.75;
-  font-weight: 600;
-}
-#campus-stores .row > div:last-child {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: center;
-  justify-content: flex-end;
-}
-#campus-stores .tag.warn {
-  background: var(--warn);
-  color: var(--warntxt);
-}
-#campus-stores .tag.alert {
-  background: var(--alert);
-  color: var(--alerttxt);
-  font-weight: 600;
-}
+
+/* ---------- Proposed desk components ---------- */
 #campus-stores .stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 14px;
+  gap: 8px;
+  margin-bottom: 16px;
 }
 #campus-stores .stat {
-  font-size: 12px;
-  padding: 3px 9px;
+  font-size: 12.5px;
+  padding: 5px 12px;
   border: 1px solid var(--line);
   border-radius: 999px;
   color: var(--quiet);
@@ -411,20 +593,15 @@ body > main {
 }
 #campus-stores .lookup label {
   flex: 1 1 240px;
-  font-size: 13px;
-  font-weight: 600;
-}
-#campus-stores .lookup label span {
-  margin-bottom: 3px;
 }
 #campus-stores .lookup input {
-  width: 100%;
-  font-weight: 400;
+  padding: 11px 18px;
+  border-radius: 999px;
 }
 #campus-stores .kit {
   border: 1px solid var(--line);
-  border-radius: 10px;
-  margin-top: 12px;
+  border-radius: 22px;
+  margin-top: 14px;
   overflow: hidden;
 }
 #campus-stores .kit header {
@@ -432,8 +609,8 @@ body > main {
   justify-content: space-between;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
-  background: var(--desk);
+  padding: 12px 16px;
+  background: linear-gradient(90deg, var(--desk), #fff);
   border-bottom: 1px solid var(--line);
 }
 #campus-stores .kit header small {
@@ -448,14 +625,14 @@ body > main {
   padding: 0;
 }
 #campus-stores .kit ul {
-  padding: 0 12px;
+  padding: 0 16px;
 }
 #campus-stores .unit {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: 8px;
-  padding: 9px 0;
+  gap: 10px;
+  padding: 12px 0;
 }
 #campus-stores .unit + .unit {
   border-top: 1px solid var(--line);
@@ -464,24 +641,25 @@ body > main {
   display: block;
 }
 #campus-stores .trail {
-  margin-top: 4px;
+  margin-top: 5px;
   font-size: 12.5px;
   color: var(--quiet);
 }
 #campus-stores .trail.expect {
   display: inline-block;
-  padding: 2px 8px;
-  border-radius: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
   background: var(--warn);
   color: var(--warntxt);
-  font-weight: 600;
+  font-weight: 700;
 }
 #campus-stores .panel {
-  margin-top: 14px;
-  padding: 14px;
+  margin-top: 16px;
+  padding: 18px;
   border: 1px solid var(--line);
-  border-left: 3px solid var(--mark);
-  border-radius: 0 10px 10px 0;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #fff, var(--desk));
+  box-shadow: inset 4px 0 0 var(--mark);
 }
 #campus-stores .panel > p.muted {
   margin-top: 3px;
@@ -493,38 +671,41 @@ body > main {
 }
 #campus-stores .fixed span {
   font-weight: 600;
-  margin-bottom: 3px;
+  margin-bottom: 5px;
 }
 #campus-stores .fixed strong {
-  padding: 7px 0 0;
+  padding: 9px 0 0;
+  font-size: 15px;
+  color: var(--sel);
 }
 #campus-stores .picklist,
 #campus-stores .checklist {
   display: grid;
-  gap: 8px;
-  margin: 12px 0;
+  gap: 10px;
+  margin: 14px 0;
 }
 #campus-stores .picklist li {
   display: grid;
-  gap: 4px;
-  padding: 9px 10px;
-  background: var(--desk);
-  border-radius: 8px;
+  gap: 5px;
+  padding: 12px 14px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
 }
 #campus-stores .picktype {
   display: block;
   font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 3px;
-}
-#campus-stores .picklist select {
-  width: 100%;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
 #campus-stores .checklist li {
-  padding: 10px 12px;
+  padding: 12px 14px;
+  background: #fff;
   border: 1px solid var(--line);
-  border-radius: 8px;
-  transition: background-color 0.15s;
+  border-radius: 18px;
+  transition:
+    background-color 0.25s,
+    transform 0.3s var(--spring);
 }
 #campus-stores .checklist li.ticked {
   background: var(--ok);
@@ -532,14 +713,15 @@ body > main {
 }
 #campus-stores .check {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   align-items: flex-start;
   cursor: pointer;
 }
 #campus-stores .check input {
-  width: 20px;
-  height: 20px;
+  width: 21px;
+  height: 21px;
   margin: 1px 0 0;
+  padding: 0;
   flex-shrink: 0;
   accent-color: var(--sel);
 }
@@ -548,44 +730,32 @@ body > main {
   display: block;
 }
 #campus-stores .tagcheck {
-  margin: 8px 0 0 30px;
-  padding: 6px 9px;
-  border-radius: 6px;
+  margin: 10px 0 0 33px;
+  padding: 7px 12px;
+  border-radius: 14px;
   font-size: 12.5px;
-  background: var(--memo);
-  color: var(--memotxt);
+  background: var(--warn);
+  color: var(--warntxt);
 }
 #campus-stores .still {
   border: 0;
-  margin: 10px 0 0 30px;
+  margin: 12px 0 0 33px;
   padding: 0;
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 10px;
 }
 #campus-stores .still legend {
   font-size: 12.5px;
   color: var(--alerttxt);
-  font-weight: 600;
+  font-weight: 700;
   padding: 0;
-  margin-bottom: 6px;
-}
-#campus-stores .still label {
-  font-size: 13px;
-  font-weight: 600;
-  min-width: 0;
-}
-#campus-stores .still label span {
-  margin-bottom: 3px;
-}
-#campus-stores .still select {
-  width: 100%;
-  font-weight: 400;
+  margin-bottom: 8px;
 }
 #campus-stores .formerror {
   color: var(--alerttxt);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 6px;
 }
 #campus-stores .formerror:empty {
@@ -593,16 +763,16 @@ body > main {
 }
 #campus-stores .msgs,
 #campus-stores .kitstatus {
-  margin-top: 14px;
+  margin-top: 16px;
 }
 #campus-stores .msgs h3,
 #campus-stores .kitstatus h3 {
-  font-size: 13px;
+  font-size: 13.5px;
 }
 #campus-stores .msgs blockquote {
   margin: 8px 0 0;
-  padding: 8px 11px;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: 18px;
   background: var(--memo);
   color: var(--memotxt);
 }
@@ -621,115 +791,157 @@ body > main {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
-  padding: 7px 0;
+  padding: 9px 0;
   border-top: 1px solid var(--line);
 }
 #campus-stores .empty {
-  padding: 18px 0 6px;
+  padding: 20px 0 6px;
   color: var(--quiet);
 }
-#campus-stores button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-@media (prefers-reduced-motion: reduce) {
-  #campus-stores .checklist li {
-    transition: none;
-  }
-}
 #campus-stores .gear {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
   display: grid;
   place-items: center;
-  background: var(--nav);
+  background: linear-gradient(135deg, #fce7f0, #fbcfe2);
   color: var(--sel);
   flex-shrink: 0;
 }
 #campus-stores .gear svg {
-  width: 19px;
-  height: 19px;
+  width: 20px;
+  height: 20px;
 }
 #campus-stores .row.has-gear,
 #campus-stores .unit.has-gear {
   grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 12px;
+  gap: 14px;
+}
+
+/* ---------- Motion ---------- */
+@keyframes cs-rise {
+  from {
+    opacity: 0;
+    transform: translateY(26px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes cs-window {
+  from {
+    opacity: 0;
+    transform: translateY(34px) rotateX(18deg) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes cs-swap {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 @media (prefers-reduced-motion: no-preference) {
+  #campus-stores.booting .mast {
+    animation: cs-rise 0.8s var(--spring) both;
+  }
+  #campus-stores.booting .brandblock,
+  #campus-stores.booting .mastside {
+    animation: cs-rise 0.8s var(--spring) 0.12s both;
+  }
+  #campus-stores.booting .windows {
+    perspective: 900px;
+  }
+  #campus-stores.booting .windows button {
+    animation: cs-window 0.85s var(--spring) both;
+  }
+  #campus-stores.booting .windows button:nth-child(1) {
+    animation-delay: 0.22s;
+  }
+  #campus-stores.booting .windows button:nth-child(2) {
+    animation-delay: 0.3s;
+  }
+  #campus-stores.booting .windows button:nth-child(3) {
+    animation-delay: 0.38s;
+  }
+  #campus-stores.booting .windows button:nth-child(4) {
+    animation-delay: 0.46s;
+  }
+  #campus-stores.booting .shift {
+    animation: cs-rise 0.8s var(--spring) 0.5s both;
+  }
+  #campus-stores.booting .page {
+    animation: cs-rise 0.85s var(--spring) 0.6s both;
+  }
+  #campus-stores .page.enter {
+    animation: cs-swap 0.45s var(--spring) both;
+  }
   #campus-stores [data-reveal] {
     transition:
-      opacity 0.35s ease,
-      transform 0.4s cubic-bezier(0.2, 0.7, 0.3, 1);
-    transition-delay: calc(var(--i, 0) * 50ms);
+      opacity 0.4s ease,
+      transform 0.5s var(--spring);
+    transition-delay: calc(var(--i, 0) * 55ms);
   }
   #campus-stores [data-reveal]:not(.in) {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px);
   }
   #campus-stores [data-reveal] .gear {
-    transition: transform 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
-    transition-delay: calc(var(--i, 0) * 50ms + 90ms);
+    transition: transform 0.55s cubic-bezier(0.3, 1.6, 0.5, 1);
+    transition-delay: calc(var(--i, 0) * 55ms + 100ms);
   }
   #campus-stores [data-reveal]:not(.in) .gear {
-    transform: scale(0.3) rotate(-14deg);
+    transform: scale(0.3) rotate(-16deg);
   }
 }
-@container (max-width:650px) {
-  #campus-stores .shell {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  #campus-stores nav {
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 7px;
-  }
-  #campus-stores nav button {
-    gap: 4px;
-    padding: 5px 7px;
+
+/* ---------- Responsive ---------- */
+@container (max-width: 760px) {
+  #campus-stores .windows {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   #campus-stores .shift {
     flex-wrap: wrap;
   }
-  #campus-stores .page {
-    padding: 14px 12px;
+  #campus-stores .mastside {
+    justify-content: flex-start;
   }
-  #campus-stores .mast {
+  #campus-stores .clock {
+    text-align: left;
+  }
+}
+@container (max-width: 460px) {
+  #campus-stores .form,
+  #campus-stores .still {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #campus-stores .still,
+  #campus-stores .tagcheck {
+    margin-left: 0;
+  }
+  #campus-stores .windows button {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
     padding: 12px;
+    row-gap: 6px;
   }
-  #campus-stores .examstrip,
-  #campus-stores .shift {
-    padding: 9px 12px;
-  }
-}
-@container (max-width:420px) {
-  #campus-stores .form {
-    grid-template-columns: minmax(0, 1fr);
+  #campus-stores .wicon {
+    grid-row: auto;
+    width: 36px;
+    height: 36px;
   }
   #campus-stores .brandmark {
     display: none;
   }
-  #campus-stores .row {
-    gap: 5px;
-  }
-  #campus-stores .still {
-    grid-template-columns: minmax(0, 1fr);
-    margin-left: 0;
-  }
-  #campus-stores .tagcheck {
-    margin-left: 0;
-  }
-  #campus-stores .unit {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  #campus-stores .kit header {
-    flex-wrap: wrap;
-  }
-  #campus-stores .modes {
-    margin-left: 0;
-  }
+  #campus-stores .unit,
   #campus-stores .row.has-gear,
   #campus-stores .unit.has-gear {
     grid-template-columns: auto minmax(0, 1fr);
@@ -738,6 +950,12 @@ body > main {
   #campus-stores .unit.has-gear > div:last-child {
     grid-column: 2;
     justify-content: flex-start;
+  }
+  #campus-stores .kit header {
+    flex-wrap: wrap;
+  }
+  #campus-stores .statusbar {
+    border-radius: 22px;
   }
 }
 @media (pointer: coarse) {

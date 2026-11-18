@@ -840,6 +840,19 @@
     advance.textContent = phase.next || "";
     for (const b of root.querySelectorAll('[data-action="mode"]'))
       b.setAttribute("aria-pressed", String(s.mode === b.dataset.val));
+    q("[data-progress]").style.width =
+      ((s.phase + 1) / shifts.length) * 100 + "%";
+    const openCount = s.loans.filter((l) => !l.back).length;
+    const counts = {
+      Requests: requests.length + " approved forms",
+      Inventory:
+        assets.filter((a) => !a.repair && !out(a.id)).length + " on the shelf",
+      "Loan register": openCount + (openCount === 1 ? " unit out" : " units out"),
+      "Desk book":
+        messages.filter((m) => m.phase <= s.phase).length +
+        s.notes.length +
+        " entries",
+    };
     q("[data-nav]").innerHTML = pages
       .map(
         ([n, icon]) =>
@@ -847,16 +860,24 @@
           n +
           '" aria-pressed="' +
           (s.tab === n) +
-          '"><svg aria-hidden="true" class="store-icon"><use href="#icon-' +
+          '"><span class="wicon"><svg aria-hidden="true" class="store-icon"><use href="#icon-' +
           icon +
-          '"></use></svg>' +
+          '"></use></svg></span><span class="wlabel">' +
           n +
-          "</button>",
+          "</span><small>" +
+          counts[n] +
+          "</small></button>",
       )
       .join("");
-    q("[data-page]").innerHTML = screens[s.tab]();
+    const pageEl = q("[data-page]");
+    pageEl.innerHTML = screens[s.tab]();
     // Animate only when the screen changes, not on every click inside it.
     const view = s.mode + "/" + s.tab;
+    if (view !== lastView && lastView) {
+      pageEl.classList.remove("enter");
+      void pageEl.offsetWidth;
+      pageEl.classList.add("enter");
+    }
     reveal(view !== lastView);
     lastView = view;
     if (q("[data-filter]")) q("[data-filter]").value = s.filter;
@@ -1199,6 +1220,7 @@
     paint();
   }
   paint();
+  setTimeout(() => root.classList.remove("booting"), 1600);
   try {
     restore(JSON.parse(localStorage.getItem(storageKey)));
   } catch {
