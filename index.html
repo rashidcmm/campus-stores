@@ -94,6 +94,39 @@
               </p>
             </div>
           </details>
+          <details>
+            <summary>What I changed</summary>
+            <div class="briefcopy">
+              <h2>Work the counter by kit. Keep the register by unit.</h2>
+              <p>
+                Clubs borrow kits, but the desk could only see single slips. At
+                7:30 pm I closed the projector and speaker one row at a time and
+                wrote the missing adapter into the Desk book. At 9 am the
+                register said <b>L-404 · AD-12 · Kabir Sen</b>. Leela’s name
+                was nowhere on it, and the Belkin and Anker adapters share
+                shelf C4.
+              </p>
+              <p>
+                <b>Issue kit</b> picks every approved unit from one form.
+                <b>Check in</b> asks you to tick what is on the counter. Anything
+                left unticked stays open with who has it and when it’s coming
+                back. <b>Who’s at the counter?</b> finds Leela’s slip by her name
+                and tells you which adapter to look for.
+              </p>
+              <p>
+                Switch to <b>Current desk</b> to run the same shift on the
+                original. The README has the full walkthrough.
+              </p>
+            </div>
+          </details>
+          <div class="modes" role="group" aria-label="Desk version">
+            <button type="button" data-action="mode" data-val="current">
+              Current desk
+            </button>
+            <button type="button" data-action="mode" data-val="proposed">
+              Proposed desk
+            </button>
+          </div>
         </div>
         <header class="mast">
           <div class="brandblock">
@@ -113,6 +146,7 @@
         </header>
         <aside class="shift">
           <div>
+            <small class="step" data-step></small>
             <b data-shift-title></b>
             <p data-shift></p>
           </div>
@@ -128,6 +162,8 @@
         </div>
         <div class="statusbar">
           <span role="status" aria-live="polite" data-status></span
+          ><button type="button" data-action="undo" data-undo hidden>
+            Undo check-in</button
           ><button type="button" data-action="restart">
             Restart sample shift
           </button>
