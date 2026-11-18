@@ -63,6 +63,41 @@
 #campus-stores.portal .kit header .tag {
   flex-shrink: 0;
 }
+#campus-stores.portal .hint {
+  margin: 0 0 16px;
+  padding: 10px 16px;
+  border-radius: 16px;
+  background: var(--memo);
+  color: var(--memotxt);
+  font-weight: 600;
+  font-size: 13.5px;
+}
+#campus-stores.portal .roles {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+#campus-stores.portal .role {
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+#campus-stores.portal .role ul {
+  margin: 8px 0 12px;
+  padding-left: 18px;
+  display: block;
+  font-size: 13.5px;
+}
+#campus-stores.portal .role li {
+  margin-top: 3px;
+}
+#campus-stores.portal .gearphoto {
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  object-fit: cover;
+}
 @container (max-width: 760px) {
   #campus-stores.portal .login {
     grid-template-columns: minmax(0, 1fr);

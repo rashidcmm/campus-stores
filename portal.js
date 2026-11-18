@@ -1,6 +1,6 @@
 (() => {
   // Demo portal: fixed accounts, data kept in this browser only.
-  const KEY = "campus-stores.portal.v1";
+  const KEY = "campus-stores.portal.v2";
   const SESSION = "campus-stores.portal.session";
   const root = document.querySelector("[data-portal]");
   const users = [
@@ -18,8 +18,8 @@
   const esc = (x) =>
     String(x ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   const seed = () => ({
-    v: 1,
-    next: 10,
+    v: 2,
+    next: 40,
     assets: [
       { id: "PR-04", type: "HDMI projector", model: "BenQ MH550", bin: "A2" },
       { id: "PR-06", type: "HDMI projector", model: "Epson EB-X49", bin: "Workshop", repair: true },
@@ -33,11 +33,23 @@
     ],
     bookings: [
       { id: 1, club: "Photo Circle", type: "Digital camera", asset: "CA-03", from: plus(-1), to: plus(5), status: "out", note: "Street portrait walk" },
-      { id: 2, club: "Debate Union", type: "Wireless microphone", asset: "MI-09", from: plus(-1), to: plus(1), status: "out", note: "Finals rehearsal" },
+      { id: 2, club: "Debate Union", type: "Wireless microphone", asset: "MI-09", from: plus(-1), to: plus(1), status: "out", note: "Finals rehearsal", ext: { to: plus(3), status: "pending" } },
       { id: 3, club: "Film Society", type: "HDMI projector", asset: null, from: plus(4), to: plus(5), status: "pending", note: "Courtyard screening" },
+      { id: 4, club: "Film Society", type: "Portable speaker", asset: null, from: plus(4), to: plus(5), status: "pending", note: "Courtyard screening" },
+      { id: 5, club: "Debate Union", type: "Portable speaker", asset: "SP-02", from: plus(2), to: plus(3), status: "approved", note: "Open mic night" },
+      { id: 6, club: "Film Society", type: "USB-C → HDMI adapter", asset: "AD-12", from: plus(-2), to: plus(2), status: "out", note: "Rough-cut review" },
+      { id: 7, club: "Photo Circle", type: "Tripod", asset: "TR-01", from: plus(-10), to: plus(-8), status: "returned", note: "Studio day" },
+      { id: 8, club: "Film Society", type: "Digital camera", asset: null, from: plus(1), to: plus(2), status: "declined", note: "Trailer shoot", reason: "The only camera is out with Photo Circle. Ask them for a handover." },
     ],
-    transfers: [],
-    reports: [],
+    transfers: [
+      { id: 20, booking: 1, asset: "CA-03", fromClub: "Photo Circle", toClub: "Film Society", from: plus(1), to: plus(2), reason: "Trailer shoot for the screening", status: "requested" },
+      { id: 21, booking: 6, asset: "AD-12", fromClub: "Film Society", toClub: "Debate Union", from: today, to: plus(1), reason: "Slides from a USB-C laptop", status: "holder-accepted", proof: { cond: "Good", note: "Cable straight, no kinks, both ends clean." } },
+    ],
+    reports: [
+      { id: 30, booking: 5, asset: "SP-02", club: "Debate Union", when: "before", text: "Grille on the left side is dented. Spotted it on the shelf before pickup.", status: "open", by: "Tara Shah", date: fmt(today) },
+      { id: 31, booking: 1, asset: "CA-03", club: "Photo Circle", when: "during", text: "Lens cap lost during the walk. Camera works fine.", status: "open", by: "Dev Menon", date: fmt(today) },
+      { id: 32, booking: 7, asset: "TR-01", club: "Photo Circle", when: "desk", text: "Leg lock was loose on return. Tightened at the desk.", status: "resolved", by: "Desk admin", date: fmt(plus(-8)) },
+    ],
   });
   let db = load();
   let me = users.find((x) => x.u === safeGet(SESSION)) || null;
@@ -49,7 +61,7 @@
   function load() {
     try {
       const d = JSON.parse(localStorage.getItem(KEY));
-      if (d && d.v === 1 && Array.isArray(d.bookings)) return d;
+      if (d && d.v === 2 && Array.isArray(d.bookings)) return d;
     } catch {}
     return seed();
   }
@@ -89,6 +101,11 @@
   const opts = (list, sel = "") =>
     list.map(([v, t]) => '<option value="' + esc(v) + '"' + (v === sel ? " selected" : "") + ">" + esc(t) + "</option>").join("");
   const head = (h, sub) => '<div class="sectionhead"><div><h2>' + esc(h) + "</h2><small>" + esc(sub) + "</small></div></div>";
+  const icons = { "HDMI projector": "projector", "Portable speaker": "speaker", "USB-C → HDMI adapter": "cable", "Wireless microphone": "mic", "Digital camera": "camera", Tripod: "tripod" };
+  const gear = (a) =>
+    a.photo
+      ? '<img class="gearphoto" src="' + esc(a.photo) + '" alt="" />'
+      : '<span class="gear" aria-hidden="true"><svg class="store-icon"><use href="#icon-' + (icons[a.type] || "package") + '"></use></svg></span>';
   const photo = (src) => (src ? '<img class="proof" src="' + esc(src) + '" alt="Condition photo" />' : "");
 
   /* ---------- Login ---------- */
@@ -96,11 +113,29 @@
     return (
       '<header class="mast"><div class="masttop"><div class="brandblock"><div class="brandmark" aria-hidden="true"><svg class="store-icon"><use href="#icon-package-open"></use></svg></div><div><h1>Campus Stores</h1><div class="muted">Club and admin portal</div></div></div><a class="backlink" href="./index.html">Open the desk</a></div></header>' +
       '<section class="page login"><form data-form="login" class="panel"><h2>Sign in</h2><p class="muted">Demo accounts only. No email needed.</p><div class="form"><label><span>Username</span><input name="u" autocomplete="username" required /></label><label><span>Password</span><input name="p" type="password" autocomplete="current-password" required /></label></div><p class="formerror" role="alert" data-error></p><div class="buttons"><button type="submit" class="primary">Sign in</button></div></form>' +
-      '<div class="demo"><h3>Demo accounts</h3><ul>' +
-      users.map((x) => "<li><b>" + esc(x.u) + "</b> / " + esc(x.p) + " <small>" + esc(x.role === "admin" ? "Admin" : x.club + " member") + "</small></li>").join("") +
-      "</ul></div></section>"
+      '<div class="demo"><h3>Or pick a role</h3><p class="muted">Every dashboard already has sample requests, handovers and reports to act on.</p><div class="roles">' +
+      roleCards.map(([u, title, tries]) => {
+        const x = users.find((y) => y.u === u);
+        return '<article class="role"><h3>' + esc(title) + "</h3><small>" + esc(x.u + " / " + x.p) + "</small><ul>" + tries.map((t) => "<li>" + esc(t) + "</li>").join("") + "</ul>" + btn("Sign in as " + x.name, "as", u, "primary") + "</article>";
+      }).join("") +
+      "</div></div></section>"
     );
   }
+  const roleCards = [
+    ["admin", "Admin · Student Activities desk", ["Approve Film Society’s projector and speaker, choosing the unit", "Approve Debate Union’s handover of the adapter (condition proof attached)", "Decide on Tara’s microphone extension", "Resolve the dented-speaker report or send it to repair", "Add a new unit with a product photo"]],
+    ["dev", "Photo Circle member", ["Film Society is asking for your camera mid-loan: accept with a condition rating, note and photo", "See your lost-lens-cap report", "Request a tripod for next week"]],
+    ["isha", "Film Society member", ["See two requests waiting and one declined with a reason", "Track your handover request for Photo Circle’s camera", "Ask to extend the adapter loan", "Report an issue with a photo"]],
+    ["tara", "Debate Union member", ["Your microphone extension is waiting on the desk", "You reported a dented speaker before pickup", "Your adapter handover is waiting for the desk"]],
+  ];
+  const hints = {
+    Requests: "Try: approve a request by choosing a unit, decline one with a reason, approve an extension, mark a loan returned.",
+    Inventory: "Try: send a unit to repair, remove one, or add a new unit with a photo.",
+    Handovers: "Club to club: the holding club records the condition first, then the desk approves.",
+    Issues: "Try: resolve a report, send the unit to repair, or log a fault found on return.",
+    "Request gear": "Pickup can be at most 30 days ahead. Try a date further out to see the rule.",
+    "My bookings": "Pending requests can be cancelled. Approved or active loans can be extended by up to 7 days.",
+    "Report an issue": "Report before pickup (so you aren’t blamed) or during the loan. Photos are optional.",
+  };
 
   /* ---------- Club member ---------- */
   const clubTabs = [["Request gear", "clipboard-list"], ["My bookings", "book-open"], ["Handovers", "package"], ["Report an issue", "messages-square"]];
@@ -150,7 +185,7 @@
       '<h3 class="sub">Availability today</h3>' +
       types().map((t) => {
         const n = freeUnits(t, today, today).length;
-        return '<div class="row"><div><strong>' + esc(t) + "</strong><small>" + db.assets.filter((a) => a.type === t).length + " units in stock</small></div><div>" + (n ? tag(n + " free today", "good") : tag("All out today", "alert")) + "</div></div>";
+        return '<div class="row has-gear">' + gear(db.assets.find((a) => a.type === t)) + "<div><strong>" + esc(t) + "</strong><small>" + db.assets.filter((a) => a.type === t).length + " units in stock</small></div><div>" + (n ? tag(n + " free today", "good") : tag("All out today", "alert")) + "</div></div>";
       }).join("")
     );
   }
@@ -278,12 +313,12 @@
       head("Inventory", "Add, remove or send units to repair") +
       db.assets.map((a) => {
         const live = db.bookings.find((b) => b.asset === a.id && b.status === "out");
-        return '<div class="row"><div><strong>' + esc(a.id + " · " + a.type) + "</strong><small>" + esc(a.model + " · shelf " + a.bin) + (live ? " · with " + esc(holderOf(live)) : "") + "</small></div><div>" +
+        return '<div class="row has-gear">' + gear(a) + "<div><strong>" + esc(a.id + " · " + a.type) + "</strong><small>" + esc(a.model + " · shelf " + a.bin) + (live ? " · with " + esc(holderOf(live)) : "") + "</small></div><div>" +
           (a.repair ? tag("In repair", "warn") : live ? tag("Out") : tag("On shelf", "good")) +
           btn(a.repair ? "Back in service" : "Send to repair", "repair", a.id) +
           (live ? "" : btn("Remove", "remove", a.id)) + "</div></div>";
       }).join("") +
-      '<form data-form="add" class="panel"><h3>Add a unit</h3><div class="form"><label><span>Tag</span><input name="id" maxlength="8" placeholder="CA-04" required /></label><label><span>Type</span><input name="type" list="types" maxlength="40" required /><datalist id="types">' + opts(types().map((t) => [t, t])) + '</datalist></label><label><span>Model</span><input name="model" maxlength="40" required /></label><label><span>Shelf</span><input name="bin" maxlength="10" required /></label></div><p class="formerror" role="alert" data-error></p><div class="buttons"><button type="submit" class="primary">Add unit</button></div></form>'
+      '<form data-form="add" class="panel"><h3>Add a unit</h3><div class="form"><label><span>Tag</span><input name="id" maxlength="8" placeholder="CA-04" required /></label><label><span>Type</span><input name="type" list="types" maxlength="40" required /><datalist id="types">' + opts(types().map((t) => [t, t])) + '</datalist></label><label><span>Model</span><input name="model" maxlength="40" required /></label><label><span>Shelf</span><input name="bin" maxlength="10" required /></label><label class="full"><span>Product photo (optional)</span><input type="file" name="photo" accept="image/*" /></label></div><p class="formerror" role="alert" data-error></p><div class="buttons"><button type="submit" class="primary">Add unit</button></div></form>'
     );
   }
   function adminHandovers() {
@@ -307,7 +342,10 @@
     const views = me.role === "admin"
       ? { Requests: adminRequests, Inventory: adminInventory, Handovers: adminHandovers, Issues: adminIssues }
       : { "Request gear": requestGear, "My bookings": myBookings, Handovers: clubHandovers, "Report an issue": clubReport };
-    root.innerHTML = shell(tabs, views[tab]());
+    const hint = me.role === "club" && tab === "Handovers"
+      ? "Ask another club for a unit they already have, or answer a club asking for yours with condition proof."
+      : hints[tab];
+    root.innerHTML = shell(tabs, '<p class="hint">' + esc(hint) + "</p>" + views[tab]());
   }
   const find = (id) => db.bookings.find((b) => b.id === Number(id));
   const findT = (id) => db.transfers.find((t) => t.id === Number(id));
@@ -318,6 +356,13 @@
     const bk = find(v), tr = findT(v);
     switch (b.dataset.act) {
       case "tab": tab = v; notice = ""; root.querySelector("[data-page]").classList.add("enter"); return paint();
+      case "as": {
+        const u = users.find((x) => x.u === v);
+        if (!u) return;
+        me = u; tab = ""; notice = "Signed in as " + u.name + ".";
+        try { localStorage.setItem(SESSION, u.u); } catch {}
+        return paint();
+      }
       case "logout": me = null; try { localStorage.removeItem(SESSION); } catch {} notice = ""; return paint();
       case "reset": db = seed(); return save("Demo data reset.");
       case "cancel": if (bk) bk.status = "cancelled"; return save("Request cancelled.");
@@ -415,7 +460,8 @@
       case "add": {
         const tagId = String(d.get("id")).trim().toUpperCase();
         if (asset(tagId)) return fail(tagId + " already exists.");
-        db.assets.push({ id: tagId, type: String(d.get("type")).trim(), model: String(d.get("model")).trim(), bin: String(d.get("bin")).trim() });
+        const pic = await readPhoto(d.get("photo"));
+        db.assets.push({ id: tagId, type: String(d.get("type")).trim(), model: String(d.get("model")).trim(), bin: String(d.get("bin")).trim(), photo: pic });
         return save(tagId + " added.");
       }
     }

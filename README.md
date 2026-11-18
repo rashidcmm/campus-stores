@@ -86,7 +86,7 @@ Concretely: sit at the desk during a morning shift change for a week and note ea
 
 ### Club and admin portal (demo)
 
-**https://rashidcmm.github.io/campus-stores/portal.html**, or use **Club & admin sign in** in the desk header. Demo accounts only (username and password, no email). Data is kept in your browser, and **Reset demo data** restores it.
+**https://rashidcmm.github.io/campus-stores/portal.html**, or use **Club & admin sign in** in the desk header. Demo accounts only (username and password, no email). The sign-in page has one-click role cards, each listing what to try. Every dashboard opens with sample requests, extensions, handovers and issue reports already in place, so each flow (club to club, club to desk, desk to equipment) can be tried immediately. Data is kept in your browser, and **Reset demo data** restores it.
 
 | Account | Role | What they can do |
 | --- | --- | --- |
@@ -119,8 +119,6 @@ None of this changes the decision above. It moves the same information (who has 
 - `styles.css`: rewritten as a dark pink and white theme. Montserrat for headings, Plus Jakarta Sans for text (from Google Fonts, falling back to system fonts offline). Dropdowns, inputs and buttons are rounded. A spring-eased load sequence brings in the header, the windows (with a slight 3D tilt), the shift card and the page; screens slide in when you switch. All motion is off under *reduce motion*, and the layout reflows to two windows per row on phones.
 - **Equipment icons and motion (proposed desk):** each unit in Inventory and the register shows an icon (projector, speaker, adapter, mic, camera), so a unit is recognisable at a glance. Rows ease in as they scroll into view when you open a screen, but not on every click. All of it is off for anyone with *reduce motion* turned on.
 - `docs/`: screenshots used above.
-
-Built with Claude Code as a pair. The brief allows AI tools. The decision, the shift walkthrough and the trade-offs are mine.
 
 ---
 
